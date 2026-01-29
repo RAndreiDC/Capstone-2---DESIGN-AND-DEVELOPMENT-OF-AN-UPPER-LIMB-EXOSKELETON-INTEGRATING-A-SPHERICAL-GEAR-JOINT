@@ -1,0 +1,117 @@
+#define VRX_PIN  A1 
+#define VRY_PIN  A0
+
+#define VRX2_PIN  A2
+#define VRY2_PIN  A3
+
+#define LEFT_THRESHOLD   432
+#define RIGHT_THRESHOLD  592
+#define UP_THRESHOLD     432
+#define DOWN_THRESHOLD   592
+
+#define LEFT_THRESHOLD1  432
+#define RIGHT_THRESHOLD1 592
+#define UP_THRESHOLD1    432
+#define DOWN_THRESHOLD1  592
+
+const int dir1 = 2;
+const int pull1 = 3;
+
+const int dir2 = 4;
+const int pull2 = 5;
+
+const int dir3 = 6;
+const int pull3 = 7;
+
+const int dir4 = 8;
+const int pull4 = 9;
+
+#define COMMAND_NO     0x00
+#define COMMAND_LEFT   0x01
+#define COMMAND_RIGHT  0x02
+#define COMMAND_UP     0x04
+#define COMMAND_DOWN   0x08
+
+int command = COMMAND_NO;
+int command1 = COMMAND_NO;
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(pull1, OUTPUT);
+  pinMode(dir1, OUTPUT);
+  pinMode(pull2, OUTPUT);
+  pinMode(dir2, OUTPUT);
+  pinMode(pull3, OUTPUT);
+  pinMode(dir3, OUTPUT);
+  pinMode(pull4, OUTPUT);
+  pinMode(dir4, OUTPUT);
+}
+
+void loop() {
+
+  int x = analogRead(VRX_PIN);
+  int y = analogRead(VRY_PIN);
+
+  int x2 = analogRead(VRX2_PIN);
+  int y2 = analogRead(VRY2_PIN);
+
+  command = COMMAND_NO;
+  command1 = COMMAND_NO;
+
+  if (x < LEFT_THRESHOLD) command |= COMMAND_LEFT;
+  else if (x > RIGHT_THRESHOLD) command |= COMMAND_RIGHT;
+
+  if (y < UP_THRESHOLD) command |= COMMAND_UP;
+  else if (y > DOWN_THRESHOLD) command |= COMMAND_DOWN;
+
+  if (x2 < LEFT_THRESHOLD1) command1 |= COMMAND_LEFT;
+  else if (x2 > RIGHT_THRESHOLD1) command1 |= COMMAND_RIGHT;
+
+  if (y2 < UP_THRESHOLD1) command1 |= COMMAND_UP;
+  else if (y2 > DOWN_THRESHOLD1) command1 |= COMMAND_DOWN;
+
+  if (command & COMMAND_LEFT) {
+    digitalWrite(dir1, HIGH);
+    digitalWrite(pull1, HIGH); delayMicroseconds(600);
+    digitalWrite(pull1, LOW);  delayMicroseconds(600);
+  }
+  else if (command & COMMAND_RIGHT) {
+    digitalWrite(dir1, LOW);
+    digitalWrite(pull1, HIGH); delayMicroseconds(600);
+    digitalWrite(pull1, LOW);  delayMicroseconds(600);
+  }
+
+  if (command1 & COMMAND_LEFT) {
+    digitalWrite(dir4, HIGH);
+    digitalWrite(pull4, HIGH); delayMicroseconds(600);
+    digitalWrite(pull4, LOW);  delayMicroseconds(600);
+  }
+  else if (command1 & COMMAND_RIGHT) {
+    digitalWrite(dir4, LOW);
+    digitalWrite(pull4, HIGH); delayMicroseconds(600);
+    digitalWrite(pull4, LOW);  delayMicroseconds(600);
+  }
+
+  if (command & COMMAND_UP) {
+    digitalWrite(dir2, HIGH);
+    digitalWrite(pull2, HIGH); delayMicroseconds(600);
+    digitalWrite(pull2, LOW);  delayMicroseconds(600);
+  }
+  else if (command & COMMAND_DOWN) {
+    digitalWrite(dir2, LOW);
+    digitalWrite(pull2, HIGH); delayMicroseconds(600);
+    digitalWrite(pull2, LOW);  delayMicroseconds(600);
+  }
+
+  if (command1 & COMMAND_UP) {
+    digitalWrite(dir3, HIGH);
+    digitalWrite(pull3, HIGH); delayMicroseconds(600);
+    digitalWrite(pull3, LOW);  delayMicroseconds(600);
+  }
+  else if (command1 & COMMAND_DOWN) {
+    digitalWrite(dir3, LOW);
+    digitalWrite(pull3, HIGH); delayMicroseconds(600);
+    digitalWrite(pull3, LOW);  delayMicroseconds(600);
+  }
+}
